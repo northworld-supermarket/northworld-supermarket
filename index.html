@@ -7,6 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Playfair+Display:ital,wght@0,800;1,500&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
 :root{
   --bg:#f4f6f1;--panel:#fff;--ink:#13200f;--muted:#5f6b58;--line:#e2e7dc;
@@ -180,9 +184,80 @@ canvas{max-width:100%}
   .burger{display:block}.content{padding:12px 12px 40px}.k2,.k3{grid-template-columns:1fr}.top{padding:8px 10px;gap:8px;flex-wrap:wrap}.top h1{font-size:15px}
   .hidem{display:none}.gsw{order:5;flex-basis:100%;max-width:none}.np{right:8px;top:100px}.ticker{margin-left:0;min-width:0;width:100%}.mini{grid-template-columns:1fr 1fr}
 }
+
+/* ================= Northworld sign-in ================= */
+body.locked .app{display:none}
+#auth{position:fixed;inset:0;z-index:9000;display:none;grid-template-columns:minmax(0,1fr) minmax(0,1fr);background:#f4f6f1;font-family:Inter,system-ui,sans-serif;color:#13200f;overflow:auto}
+body.locked #auth{display:grid}
+#auth .au-hero{position:relative;margin:0;padding:clamp(18px,3vw,40px);background:radial-gradient(ellipse at 45% 35%,#2b5a22 0%,#1a3f14 45%,#10280c 100%);color:#e9eedd;display:flex;min-height:100vh;overflow:hidden}
+#auth .au-frame{position:relative;flex:1;border:1.5px solid rgba(194,202,172,.35);border-radius:26px;padding:clamp(22px,3.4vw,52px);display:flex;flex-direction:column;box-shadow:inset 0 0 0 10px rgba(255,255,255,.02)}
+#auth .au-brand{display:flex;align-items:center;gap:16px}
+#auth .au-badge{width:64px;height:64px;border-radius:16px;background:#14320f;border:1px solid rgba(194,202,172,.4);display:flex;align-items:center;justify-content:center;flex:none}
+#auth .au-badge img{width:54px}
+#auth .au-brand b{font-family:Oswald,'Arial Narrow',sans-serif;font-weight:600;font-size:clamp(20px,2.2vw,28px);letter-spacing:2px;color:#fff}
+#auth .au-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 0}
+#auth .au-center img{width:min(420px,80%);filter:drop-shadow(0 18px 30px rgba(0,0,0,.35))}
+#auth .au-rule{display:flex;align-items:center;gap:14px;width:min(380px,74%);margin:26px 0 18px;color:#c2caac}
+#auth .au-rule:before,#auth .au-rule:after{content:"";flex:1;height:1px;background:rgba(194,202,172,.55)}
+#auth .au-rule i{width:10px;height:10px;border:1.5px solid #c2caac;transform:rotate(45deg)}
+#auth .au-tag{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:clamp(24px,2.6vw,36px);color:#e6ebc9;line-height:1.15}
+#auth .au-sub{margin-top:14px;color:#c9d3b7;letter-spacing:.8px;font-size:15px}
+#auth .au-foot{color:#b7c4a3;font-size:14px}
+#auth .au-bub{position:absolute;border:1.5px solid rgba(194,202,172,.18);border-radius:50%}
+#auth .au-side2{display:flex;align-items:center;justify-content:center;padding:32px 18px;min-height:100vh}
+#auth .au-card2{width:min(470px,100%);background:#fff;border:1px solid #e3dccb;border-radius:28px;padding:clamp(26px,3.4vw,46px);box-shadow:0 30px 60px -30px rgba(20,50,15,.25)}
+#auth .au-mini{display:flex;align-items:center;gap:14px;color:#3b4a35;font-size:17px}
+#auth .au-mini span.au-ic{width:52px;height:52px;border-radius:13px;border:1px solid #e2e7dc;display:flex;align-items:center;justify-content:center;background:#fff}
+#auth .au-mini img{width:44px}
+#auth h1{font-family:'Playfair Display',Georgia,serif;font-weight:800;font-size:clamp(34px,4vw,48px);margin:26px 0 8px;letter-spacing:-.5px;line-height:1.05;color:#13200f}
+#auth .au-lead{color:#55624e;margin:0 0 24px;font-size:16px;line-height:1.5}
+#auth .au-tabs2{display:grid;grid-template-columns:1fr 1fr;border-bottom:1.5px solid #e2e7dc;margin-bottom:26px}
+#auth .au-tabs2 button{background:none;border:0;padding:12px;font:600 17px Inter,sans-serif;color:#5f6b58;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1.5px}
+#auth .au-tabs2 button.on{color:#14320f;border-color:#14320f}
+#auth label.au-l{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:15px;margin:0 0 8px;color:#13200f}
+#auth label.au-l a{font-weight:500;color:#13200f;text-decoration:none}
+#auth .au-inp{position:relative;margin-bottom:20px}
+#auth input,#auth select{width:100%;height:54px;border:1px solid #dfe3d8;border-radius:14px;background:#fafbf8;padding:0 18px;font:16px Inter,sans-serif;color:#13200f;outline:none}
+#auth input:focus,#auth select:focus{border-color:#3a7d2a;box-shadow:0 0 0 3px rgba(58,125,42,.15);background:#fff}
+#auth .au-eye{position:absolute;right:8px;top:7px;width:40px;height:40px;border:0;background:none;cursor:pointer;color:#3b4a35;border-radius:10px}
+#auth .au-go{width:100%;height:56px;border:0;border-radius:16px;background:#1a3f14;color:#fff;font:600 18px Inter,sans-serif;cursor:pointer;margin-top:4px}
+#auth .au-go:hover{background:#14320f}#auth .au-go:disabled{opacity:.6;cursor:wait}
+#auth .au-ghost{width:100%;height:50px;border:1px solid #dfe3d8;border-radius:14px;background:#fff;color:#14320f;font:600 16px Inter,sans-serif;cursor:pointer;margin-top:12px}
+#auth .au-alt{text-align:center;color:#6b7764;margin-top:20px;font-size:15px}
+#auth .au-alt a{color:#14320f;font-weight:700;text-decoration:underline}
+#auth .au-msg{border-radius:12px;padding:12px 14px;font-size:14.5px;line-height:1.45;margin-bottom:18px}
+#auth .au-msg.au-err{background:#fdeceA;color:#9b2c1f}#auth .au-msg.au-ok{background:#e7f6ec;color:#15602e}#auth .au-msg.au-info{background:#edf2e4;color:#2d4a22}
+#auth .au-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#auth .au-big{font-size:46px;text-align:center;margin:10px 0 0}
+#auth .au-meter{height:6px;border-radius:4px;background:#eef1ea;margin:-12px 0 18px;overflow:hidden}#auth .au-meter i{display:block;height:100%;width:0;transition:.3s}
+.whoami{margin:12px 12px 4px;background:#1d4a17;border-radius:10px;padding:10px 11px;color:#e3e9d6;font-size:13px}
+.whoami b{display:block;color:#fff;font-size:14px}.whoami span{color:#c2caac;font-size:11.5px;text-transform:uppercase;letter-spacing:1px}
+.whoami button{margin-top:8px;width:100%;background:transparent;border:1px solid #3a6630;color:#e3e9d6;border-radius:8px;padding:6px;cursor:pointer;font:inherit}
+.whoami button:hover{background:#2a5222}
+@media(max-width:900px){#auth{grid-template-columns:1fr}#auth .au-hero{min-height:auto}#auth .au-frame{border-radius:20px}#auth .au-center{padding:18px 0 4px}#auth .au-center img{width:min(300px,70%)}#auth .au-sub,#auth .au-foot,#auth .au-bub{display:none}#auth .au-side2{min-height:auto;padding-top:20px}}
+@media(max-width:480px){#auth .au-two{grid-template-columns:1fr}#auth .au-brand b{font-size:18px}#auth .au-badge{width:50px;height:50px}#auth .au-badge img{width:42px}}
 </style>
 </head>
-<body>
+<body class="locked">
+<div id="auth" role="dialog" aria-label="Sign in to Northworld Supermarket">
+  <section class="au-hero">
+    <div class="au-frame">
+      <div class="au-brand"><div class="au-badge"><img id="au_badge" alt=""></div><b>NORTHWORLD SUPERMARKET</b></div>
+      <div class="au-center">
+        <img id="au_logo" alt="Nmart — Live Fresh For Less">
+        <div class="au-rule"><i></i></div>
+        <div class="au-tag">Fresh food. Fair prices. Every day.</div>
+        <div class="au-sub">Groceries · Fresh produce · Butchery · Household</div>
+      </div>
+      <div class="au-foot">Kismayu Road, Garissa · Powered by Amanah</div>
+      <span class="au-bub" style="width:150px;height:150px;right:-30px;bottom:150px"></span>
+      <span class="au-bub" style="width:250px;height:250px;right:60px;bottom:-110px"></span>
+      <span class="au-bub" style="width:190px;height:190px;right:-90px;bottom:-60px"></span>
+    </div>
+  </section>
+  <section class="au-side2"><div class="au-card2" id="au_card"></div></section>
+</div>
+
 <div class="app">
   <aside class="side" id="side">
     <div class="logo" id="logo"></div>
@@ -2137,8 +2212,257 @@ const _rdH=repData;repData=function(rid){if(rid!=='hr_req')return _rdH(rid);cons
 enrich();seedToday();postSeed();seedCash();seedAtt();seedHR();advSync();
 try{const l=localStorage.getItem('nw_logo');if(l)S.logo=l;const b=JSON.parse(localStorage.getItem('nw_br')||'null');if(b)BR=b}catch(e){}
 try{const h=location.hash.slice(1);if(NAV.find(n=>n[0]===h))S.view=h}catch(e){}
-render();
-setTimeout(()=>{const n=nonMoving().length;if(n)toast(`⛔ ${n} items have not sold in 30+ days — see Needs attention`)},1200);
+window.__nwStart=function(){render();
+setTimeout(()=>{const n=nonMoving().length;if(n)toast(`⛔ ${n} items have not sold in 30+ days — see Needs attention`)},1200);};
+</script>
+<script>
+/* =========================================================
+   NORTHWORLD SUPERMARKET — SIGN-IN & ACCOUNTS (Firebase)
+   1. Paste your Firebase web config into NW_FIREBASE.
+   2. Put the main admin's email in NW_OWNER_EMAIL.
+   Until both are filled in, the page offers the demo version.
+   ========================================================= */
+const NW_FIREBASE = {
+  apiKey: "AIzaSyDB4w06uixvqlorA6w2JQxHnDtqUYrls3I",
+  authDomain: "northworld-supermarket.firebaseapp.com",
+  projectId: "northworld-supermarket",
+  storageBucket: "northworld-supermarket.firebasestorage.app",
+  messagingSenderId: "721115244498",
+  appId: "1:721115244498:web:4e947d9829025b536b4a0b"
+};
+const NW_OWNER_EMAIL = "northworldm@gmail.com";          // e.g. "northworldsupermarket@gmail.com"
+const NW_IDLE_MINUTES = 20;         // sign out after this many minutes of no activity
+
+{
+const FB = !!(NW_FIREBASE.apiKey && NW_FIREBASE.projectId && typeof firebase !== 'undefined');
+window.NW_FBMODE = FB;
+const ADMIN_ROLES = ['Super Admin','Owner/Director','General Manager'];
+const OWNER = (NW_OWNER_EMAIL || '').trim().toLowerCase();
+const A = {mode:'staff', view:'signin', msg:null, user:null, profile:null, started:false, idle:null, pendingN:0};
+let auth = null, db = null;
+const $c = () => document.getElementById('au_card');
+const H = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ERR = {
+  'auth/invalid-email':'That email address does not look right.',
+  'auth/user-not-found':'Wrong email or password.',
+  'auth/wrong-password':'Wrong email or password.',
+  'auth/invalid-credential':'Wrong email or password.',
+  'auth/invalid-login-credentials':'Wrong email or password.',
+  'auth/email-already-in-use':'An account with this email already exists. Sign in instead, or reset the password.',
+  'auth/weak-password':'Choose a stronger password — at least 8 characters with letters and numbers.',
+  'auth/too-many-requests':'Too many attempts. For safety this account is paused for a few minutes. Try again later or reset the password.',
+  'auth/network-request-failed':'No internet connection. Check your network and try again.',
+  'auth/user-disabled':'This account has been disabled. Contact the main admin.',
+  'auth/unauthorized-domain':'This web address is not allowed yet. The admin must add it under Firebase → Authentication → Settings → Authorized domains.',
+  'permission-denied':'You do not have permission for that.'
+};
+const errText = e => ERR[e && e.code] || (e && e.message ? e.message.replace(/^Firebase:\s*/,'').replace(/\s*\(.*\)\.?$/,'') : 'Something went wrong. Try again.');
+const lock = () => document.body.classList.add('locked');
+const unlock = () => document.body.classList.remove('locked');
+
+function setImgs(){
+  try{
+    document.getElementById('au_logo').src = NW_LOGO_DARK;
+    document.getElementById('au_badge').src = NW_LOGO_DARK;
+  }catch(e){}
+}
+
+/* ---------- views ---------- */
+const head = (title, lead) => `<div class="au-mini"><span class="au-ic"><img src="${NW_LOGO}" alt=""></span>Northworld Staff Portal</div>
+  <h1>${title}</h1><p class="au-lead">${lead}</p>${A.msg ? `<div class="au-msg au-${A.msg[0]}">${A.msg[1]}</div>` : ''}`;
+const pwField = (id, ph, ac) => `<div class="au-inp"><input id="${id}" type="password" placeholder="${ph}" autocomplete="${ac}" oninput="${id==='au_pw1'?'nwMeter(this.value)':''}"><button type="button" class="au-eye" aria-label="Show password" onclick="nwEye('${id}',this)">${EYE}</button></div>`;
+const EYE = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+
+const V2 = {
+  setup: () => head('Sign in', 'Online accounts are not switched on yet.') + `
+    <div class="au-msg au-info">The admin still needs to connect this system to Firebase. Until then you can look around the <b>demo version</b>, which uses sample data saved only in this browser.</div>
+    <button class="au-go" onclick="nwDemo()">Open demo version</button>`,
+  signin: () => head('Sign in', 'Choose who you are, then enter your details.') + `
+    <div class="au-tabs2"><button class="${A.mode==='admin'?'on':''}" onclick="nwMode('admin')">Admin</button><button class="${A.mode==='staff'?'on':''}" onclick="nwMode('staff')">Staff</button></div>
+    <form onsubmit="nwSignIn(event)">
+      <label class="au-l" for="au_em">Email</label><div class="au-inp"><input id="au_em" type="email" placeholder="example@mail.com" autocomplete="username" required></div>
+      <label class="au-l" for="au_pw">Password <a href="#" onclick="nwGo('forgot');return false">Forgot password?</a></label>${pwField('au_pw','••••••••','current-password')}
+      <button class="au-go" id="au_go">Sign in</button>
+    </form>
+    <div class="au-alt">New staff member? <a href="#" onclick="nwGo('signup');return false">Create an account</a></div>`,
+  signup: () => head('Create account', 'Fill in your details. The main admin will approve your account and give you your role.') + `
+    <form onsubmit="nwSignUp(event)">
+      <label class="au-l" for="au_nm">Full name</label><div class="au-inp"><input id="au_nm" placeholder="e.g. Hodan Abdi" autocomplete="name" required></div>
+      <div class="au-two"><div><label class="au-l" for="au_ph">Phone</label><div class="au-inp"><input id="au_ph" type="tel" placeholder="07XX XXX XXX" autocomplete="tel" required></div></div>
+      <div><label class="au-l" for="au_rl">Your position</label><div class="au-inp"><select id="au_rl">${['Cashier','Storekeeper','Accountant','General Manager','Auditor','Owner/Director'].filter(r=>ROLES[r]).map(r=>`<option>${r}</option>`).join('')}</select></div></div></div>
+      <label class="au-l" for="au_em">Email</label><div class="au-inp"><input id="au_em" type="email" placeholder="example@mail.com" autocomplete="username" required></div>
+      <label class="au-l" for="au_pw1">Password</label>${pwField('au_pw1','At least 8 characters','new-password')}<div class="au-meter"><i id="au_mt"></i></div>
+      <label class="au-l" for="au_pw2">Confirm password</label>${pwField('au_pw2','Type it again','new-password')}
+      <button class="au-go" id="au_go">Create account</button>
+    </form>
+    <div class="au-alt">Already have an account? <a href="#" onclick="nwGo('signin');return false">Sign in</a></div>`,
+  forgot: () => head('Reset password', 'Enter your email and we will send you a link to choose a new password.') + `
+    <form onsubmit="nwForgot(event)">
+      <label class="au-l" for="au_em">Email</label><div class="au-inp"><input id="au_em" type="email" placeholder="example@mail.com" autocomplete="username" required></div>
+      <button class="au-go" id="au_go">Send reset link</button>
+    </form>
+    <div class="au-alt"><a href="#" onclick="nwGo('signin');return false">Back to sign in</a></div>`,
+  verify: () => head('Verify your email', `We sent a verification link to <b>${H(A.user && A.user.email)}</b>.`) + `
+    <div class="au-big">✉️</div>
+    <p class="au-lead" style="text-align:center">Open the email, tap the link, then come back and tap the button below. Check the Spam folder if you cannot find it.</p>
+    <button class="au-go" id="au_go" onclick="nwCheckVerified()">I have verified my email</button>
+    <button class="au-ghost" onclick="nwResend()">Send the email again</button>
+    <div class="au-alt"><a href="#" onclick="nwSignOut();return false">Use a different account</a></div>`,
+  pending: () => head('Waiting for approval', `Thank you, <b>${H(A.profile && A.profile.name)}</b>. Your email is verified.`) + `
+    <div class="au-big">⏳</div>
+    <p class="au-lead" style="text-align:center">The main admin must approve your account and set your role before you can use the system. You will be able to sign in as soon as that is done.</p>
+    <button class="au-go" id="au_go" onclick="nwRecheck()">Check again</button>
+    <div class="au-alt"><a href="#" onclick="nwSignOut();return false">Sign out</a></div>`,
+  blocked: () => head('Account disabled', 'This account cannot use the system right now.') + `
+    <div class="au-big">🔒</div>
+    <p class="au-lead" style="text-align:center">Your access has been switched off by the main admin. Contact them if you think this is a mistake.</p>
+    <button class="au-go" onclick="nwSignOut()">Sign out</button>`,
+  loading: () => `<div style="text-align:center;padding:60px 0"><div class="au-big">🛒</div><p class="au-lead">Checking your account…</p></div>`
+};
+function draw(){ const c = $c(); if(c) c.innerHTML = V2[A.view](); const f = c && c.querySelector('input'); if(f && innerWidth > 900) f.focus(); }
+function go(v, msg){ A.view = v; A.msg = msg || null; draw(); }
+const busy = (on, txt) => { const b = document.getElementById('au_go'); if(b){ b.disabled = on; if(txt) b.textContent = txt; } };
+
+window.nwGo = v => go(v);
+window.nwMode = m => { A.mode = m; A.msg = null; draw(); };
+window.nwEye = (id, btn) => { const i = document.getElementById(id); i.type = i.type === 'password' ? 'text' : 'password'; btn.style.color = i.type === 'text' ? '#3a7d2a' : ''; };
+window.nwMeter = v => { let s = 0; if(v.length >= 8) s++; if(/[A-Z]/.test(v) && /[a-z]/.test(v)) s++; if(/\d/.test(v)) s++; if(/[^A-Za-z0-9]/.test(v) || v.length >= 12) s++;
+  const m = document.getElementById('au_mt'); if(m){ m.style.width = (s * 25) + '%'; m.style.background = ['#c23a2b','#c23a2b','#b56b00','#3a7d2a','#15803d'][s]; } };
+window.nwDemo = () => { unlock(); if(!A.started){ A.started = true; window.__nwStart(); } };
+
+/* ---------- actions ---------- */
+window.nwSignIn = async e => {
+  e.preventDefault(); const em = document.getElementById('au_em').value.trim(), pw = document.getElementById('au_pw').value;
+  busy(true, 'Signing in…');
+  try{ await auth.signInWithEmailAndPassword(em, pw); }
+  catch(err){ go('signin', ['err', errText(err)]); document.getElementById('au_em').value = em; }
+};
+window.nwSignUp = async e => {
+  e.preventDefault(); const g = id => document.getElementById(id).value.trim();
+  const name = g('au_nm'), phone = g('au_ph'), role = g('au_rl'), em = g('au_em'), p1 = document.getElementById('au_pw1').value, p2 = document.getElementById('au_pw2').value;
+  const keep = () => { [['au_nm',name],['au_ph',phone],['au_em',em]].forEach(([i,v]) => { const x = document.getElementById(i); if(x) x.value = v; }); const r = document.getElementById('au_rl'); if(r) r.value = role; };
+  if(p1.length < 8 || !/\d/.test(p1) || !/[A-Za-z]/.test(p1)){ A.msg = ['err','Password must be at least 8 characters and include letters and numbers.']; draw(); keep(); return; }
+  if(p1 !== p2){ A.msg = ['err','The two passwords do not match.']; draw(); keep(); return; }
+  busy(true, 'Creating account…');
+  try{
+    A.signupInfo = {name, phone, requestedRole: role};
+    const cred = await auth.createUserWithEmailAndPassword(em, p1);
+    await cred.user.updateProfile({displayName: name});
+    await ensureProfile(cred.user);
+    await cred.user.sendEmailVerification();
+  }catch(err){ A.signupInfo = null; A.msg = ['err', errText(err)]; A.view = 'signup'; draw(); keep(); }
+};
+window.nwForgot = async e => {
+  e.preventDefault(); const em = document.getElementById('au_em').value.trim(); busy(true, 'Sending…');
+  try{ await auth.sendPasswordResetEmail(em); }catch(err){ if(err.code !== 'auth/user-not-found'){ go('forgot', ['err', errText(err)]); return; } }
+  go('signin', ['ok', 'If an account exists for <b>' + H(em) + '</b>, a reset link is on its way. Check your inbox and Spam folder.']);
+};
+window.nwResend = async () => { try{ await A.user.sendEmailVerification(); go('verify', ['ok','Sent again. It can take a minute to arrive.']); }catch(err){ go('verify', ['err', errText(err)]); } };
+window.nwCheckVerified = async () => { busy(true, 'Checking…'); try{ await A.user.reload(); await A.user.getIdToken(true); }catch(e){} afterAuth(auth.currentUser); };
+window.nwRecheck = () => { busy(true, 'Checking…'); afterAuth(auth.currentUser); };
+window.nwSignOut = async (why) => { try{ if(A.profile) safeLog('Signed out'); await auth.signOut(); }catch(e){} A.profile = null; lock(); go('signin', why ? ['info', why] : null); };
+
+/* ---------- profile & access ---------- */
+async function ensureProfile(u){
+  const ref = db.collection('users').doc(u.uid); const snap = await ref.get();
+  if(snap.exists) return snap.data();
+  const isOwner = OWNER && (u.email || '').toLowerCase() === OWNER;
+  const info = A.signupInfo || {};
+  const doc = {name: info.name || u.displayName || u.email, email: (u.email || '').toLowerCase(), phone: info.phone || '', requestedRole: info.requestedRole || '',
+    role: isOwner ? 'Super Admin' : 'Pending', status: isOwner ? 'active' : 'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp()};
+  await ref.set(doc); A.signupInfo = null; return doc;
+}
+async function afterAuth(u){
+  A.user = u;
+  if(!u){ A.profile = null; lock(); if(A.view === 'loading' || !['signin','signup','forgot'].includes(A.view)) go('signin', A.msg); return; }
+  if(!u.emailVerified){ lock(); go('verify'); return; }
+  go('loading');
+  let p;
+  try{ p = await ensureProfile(u); }
+  catch(err){ lock(); go('signin', ['err', 'Could not load your account: ' + errText(err)]); try{ await auth.signOut(); }catch(e){} return; }
+  A.profile = p;
+  if(p.status === 'disabled'){ lock(); go('blocked'); return; }
+  if(p.status !== 'active' || !ROLES[p.role]){ lock(); go('pending'); return; }
+  if(A.mode === 'admin' && !ADMIN_ROLES.includes(p.role)){ await auth.signOut(); A.profile = null; go('signin', ['err', 'This is a staff account. Use the <b>Staff</b> tab to sign in.']); return; }
+  enter(p);
+}
+function enter(p){
+  S.role = p.role; USERS[p.role] = p.name;
+  if(!S.view || !can(S.view)){ const first = NAV.find(n => n.length > 1 && can(n[0])); if(first) S.view = first[0]; }
+  unlock();
+  if(!A.started){ A.started = true; window.__nwStart(); } else render();
+  safeLog('Signed in');
+  startIdle();
+  if(p.role === 'Super Admin') countPending();
+}
+function safeLog(a){ try{ log(a, S.role, '-', '-', 'login', {user: USERS[S.role], role: S.role, br: 'B1'}); }catch(e){} }
+async function countPending(){ try{ const q = await db.collection('users').where('status','==','pending').get(); A.pendingN = q.size; buildShell(); }catch(e){} }
+
+/* ---------- idle sign-out ---------- */
+function startIdle(){
+  const reset = () => { clearTimeout(A.idle); A.idle = setTimeout(() => nwSignOut('You were signed out after ' + NW_IDLE_MINUTES + ' minutes of no activity.'), NW_IDLE_MINUTES * 60000); };
+  if(!A.idleBound){ ['click','keydown','touchstart','scroll'].forEach(ev => addEventListener(ev, () => { if(A.profile) reset(); }, {passive: true})); A.idleBound = true; }
+  reset();
+}
+
+/* ---------- sidebar: who is signed in ---------- */
+const _bs = buildShell;
+buildShell = function(){
+  _bs();
+  if(!FB) return;
+  const rb = document.querySelector('.rolebox'); if(rb) rb.style.display = 'none';
+  let w = document.getElementById('whoami');
+  if(!w){ w = document.createElement('div'); w.id = 'whoami'; w.className = 'whoami'; rb.parentNode.insertBefore(w, rb.nextSibling); }
+  const p = A.profile || {};
+  w.innerHTML = `<b>${H(p.name || '')}</b><span>${H(p.role || '')}</span>${A.pendingN && p.role === 'Super Admin' ? `<div style="margin-top:6px"><a href="#users" onclick="S.view='users';render();return false" style="color:#f5d27a">⏳ ${A.pendingN} account${A.pendingN>1?'s':''} waiting for approval</a></div>` : ''}<button onclick="nwSignOut()">Sign out</button>`;
+};
+
+/* ---------- Users page: real login accounts (Super Admin) ---------- */
+const _vu = V.users;
+V.users = function(){
+  const base = _vu();
+  if(!FB || S.role !== 'Super Admin') return base;
+  setTimeout(loadAccounts, 0);
+  return `<div class="card" id="fbacc"><h3>🔐 Login accounts</h3><p class="muted">Loading accounts…</p></div><div class="mt"></div>` + base;
+};
+const badge = s => s === 'active' ? '<span class="badge b-g">Active</span>' : s === 'pending' ? '<span class="badge b-a">Waiting</span>' : '<span class="badge b-r">Disabled</span>';
+async function loadAccounts(){
+  const box = document.getElementById('fbacc'); if(!box) return;
+  try{
+    const q = await db.collection('users').get();
+    const L = q.docs.map(d => Object.assign({id: d.id}, d.data())).sort((a, b) => (a.status === 'pending' ? 0 : 1) - (b.status === 'pending' ? 0 : 1) || String(a.name).localeCompare(b.name));
+    A.pendingN = L.filter(x => x.status === 'pending').length;
+    const opts = cur => Object.keys(ROLES).map(r => `<option ${r === cur ? 'selected' : ''}>${r}</option>`).join('');
+    box.innerHTML = `<h3>🔐 Login accounts <span class="r small muted">${L.length} account${L.length===1?'':'s'} · ${A.pendingN} waiting</span></h3>
+      <p class="small muted">Everyone signs in with their own email and password. New accounts stay <b>Waiting</b> until you approve them here and choose their role.</p>
+      <div class="tw"><table class="stack"><tr><th>Name</th><th>Email</th><th>Phone</th><th>Asked for</th><th>Role</th><th>Status</th><th></th></tr>
+      ${L.map(u => { const me = A.user && u.id === A.user.uid; return `<tr><td><b>${H(u.name)}</b>${me ? ' <span class="small muted">(you)</span>' : ''}</td><td class="small">${H(u.email)}</td><td class="small">${H(u.phone || '—')}</td><td class="small">${H(u.requestedRole || '—')}</td>
+        <td><select class="in" id="rl_${u.id}" ${me ? 'disabled' : ''}>${opts(ROLES[u.role] ? u.role : (ROLES[u.requestedRole] ? u.requestedRole : 'Cashier'))}</select></td><td>${badge(u.status)}</td>
+        <td style="white-space:nowrap">${me ? '' : u.status === 'active' ? `<button class="btn sm" onclick="nwAcc('${u.id}','save')">Save role</button> <button class="btn sm d" onclick="nwAcc('${u.id}','disable')">Disable</button>` : u.status === 'pending' ? `<button class="btn sm p" onclick="nwAcc('${u.id}','approve')">Approve</button> <button class="btn sm d" onclick="nwAcc('${u.id}','disable')">Reject</button>` : `<button class="btn sm" onclick="nwAcc('${u.id}','approve')">Enable</button>`}</td></tr>`; }).join('')}
+      </table></div>`;
+    buildShell();
+  }catch(err){ box.innerHTML = `<h3>🔐 Login accounts</h3><div class="alert">Could not load accounts: ${H(errText(err))}. Check the Firestore security rules.</div>`; }
+}
+window.nwAcc = async (id, act) => {
+  const role = (document.getElementById('rl_' + id) || {}).value;
+  const by = (A.profile && A.profile.name) || 'Admin';
+  const upd = act === 'disable' ? {status: 'disabled', changedBy: by} : {role, status: 'active', approvedBy: by, approvedAt: firebase.firestore.FieldValue.serverTimestamp()};
+  try{ await db.collection('users').doc(id).update(upd); toast(act === 'disable' ? 'Account disabled' : act === 'save' ? 'Role updated' : 'Account approved as ' + role); try{ log(act === 'disable' ? 'Disabled login' : 'Approved login', id, '-', role || '-', 'edit'); }catch(e){} loadAccounts(); }
+  catch(err){ toast('Could not update: ' + errText(err)); }
+};
+
+/* ---------- start ---------- */
+setImgs(); lock();
+if(!FB){ go('setup'); }
+else{
+  firebase.initializeApp(NW_FIREBASE);
+  auth = firebase.auth(); db = firebase.firestore();
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+  go('loading');
+  auth.onAuthStateChanged(u => afterAuth(u));
+}
+}
+
 </script>
 </body>
 </html>
